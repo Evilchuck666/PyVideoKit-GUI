@@ -1,0 +1,10 @@
+*
+!*/
+!*.py
+!LICENSE
+!pyproject.toml
+!README.md
+!.gitignore
+.venv/
+.vscode/
+build/
