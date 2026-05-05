@@ -10,10 +10,10 @@ Graphical interface for PyVideoKit — FFmpeg-based video processing. Provides t
 ## ✨ Features
 
 - 📼 **VHS effect** — retro visual noise, color bleed, and audio degradation
-- ✂️ **Trim** — cut a segment by start/end time with stream copy
+- ✂️ **Trim** — cut a segment by start/end time with stream copy (no re-encoding)
 - 🔗 **Concatenate** — join multiple videos with drag-and-drop reordering
 - 🎬 **Fade** — fade-in and/or fade-out on an FFV1 master
-- 🔊 **Extract audio** — dump the audio track to uncompressed WAV
+- 🔊 **Extract audio** — dump the audio track to uncompressed WAV (PCM 16-bit)
 - 🎞️ **Convert to FFV1** — create a lossless MKV master for editing
 - 📺 **Prepare for YouTube** — encode to ProRes 422 HQ MOV, upscaled to 4K
 
@@ -31,9 +31,21 @@ Graphical interface for PyVideoKit — FFmpeg-based video processing. Provides t
 
 ## 🔧 Installation
 
+### 🏗️ Arch Linux (AUR)
+
 ```bash
-pip install .
+yay -S python-pyvideokit-gui
 ```
+
+FFmpeg, FFprobe, SoX, PySide6, and PyVideoKit-Libs are installed automatically as pacman dependencies.
+
+### 🐍 Other systems (pip)
+
+```bash
+pip install PyVideoKit-GUI
+```
+
+Make sure **FFmpeg**, **FFprobe**, and **SoX** are available in your `PATH`.
 
 ---
 
