@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from PySide6.QtWidgets import QDoubleSpinBox, QHBoxLayout, QLabel, QSpinBox, QVBoxLayout
+from PySide6.QtWidgets import QDoubleSpinBox, QHBoxLayout, QLabel, QVBoxLayout
 
 from pyvideokit_gui._base_panel import BasePanel
 from pyvideokit_libs import fade_video
@@ -30,12 +30,6 @@ class FadePanel(BasePanel):
         row.addLayout(fo_col)
         layout.addLayout(row)
 
-        layout.addWidget(QLabel("FPS"))
-        self._fps = QSpinBox()
-        self._fps.setRange(1, 240)
-        self._fps.setValue(60)
-        layout.addWidget(self._fps)
-
         self._output = self._output_row(layout, "Output (optional)")
 
     def _run(self):
@@ -54,6 +48,5 @@ class FadePanel(BasePanel):
             Path(path),
             fade_in=fi,
             fade_out=fo,
-            fps=self._fps.value(),
             output=output,
         )
