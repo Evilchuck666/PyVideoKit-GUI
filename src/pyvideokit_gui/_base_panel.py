@@ -14,7 +14,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from pyvideokit_gui._worker import Worker
+from pyvideokit_gui._worker import BatchWorker, Worker
 
 _VIDEO_FILTER = "Video files (*.mkv *.mp4 *.mov *.avi *.webm);;All files (*)"
 _VIDEO_EXTS = {".mkv", ".mp4", ".mov", ".avi", ".webm"}
@@ -88,7 +88,10 @@ class BasePanel(QWidget):
             self._on_panel_drop(paths)
 
     def _on_panel_drop(self, paths: list):
-        if hasattr(self, "_input"):
+        if hasattr(self, "_inputs"):
+            for p in paths:
+                self._inputs.addItem(p)
+        elif hasattr(self, "_input"):
             self._input.setText(paths[0])
 
     def _build_ui(self, layout: QVBoxLayout):
@@ -133,6 +136,33 @@ class BasePanel(QWidget):
         if path:
             le.setText(path)
 
+    # ── batch input list ──────────────────────────────────────────────────
+
+    def _batch_input_list(self, layout, label="Input files") -> "DropListWidget":
+        layout.addWidget(QLabel(label))
+        lst = DropListWidget()
+        lst.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        lst.setMinimumHeight(120)
+        layout.addWidget(lst)
+        btns = QHBoxLayout()
+        add_btn = QPushButton("Add files…")
+        rm_btn = QPushButton("Remove selected")
+        btns.addWidget(add_btn)
+        btns.addWidget(rm_btn)
+        layout.addLayout(btns)
+        add_btn.clicked.connect(lambda: self._batch_add(lst))
+        rm_btn.clicked.connect(lambda: self._batch_remove(lst))
+        return lst
+
+    def _batch_add(self, lst):
+        paths, _ = QFileDialog.getOpenFileNames(self, "Add video files", "", _VIDEO_FILTER)
+        for p in paths:
+            lst.addItem(p)
+
+    def _batch_remove(self, lst):
+        for item in lst.selectedItems():
+            lst.takeItem(lst.row(item))
+
     # ── worker ────────────────────────────────────────────────────────────
 
     def _start_worker(self, fn, *args, **kwargs):
@@ -145,18 +175,53 @@ class BasePanel(QWidget):
         self._worker.error.connect(self._on_error)
         self._worker.start()
 
+    def _start_batch(self, fn, paths, make_kwargs):
+        self._progress.setValue(0)
+        self._progress_item.setValue(0)
+        self._status.setText(f"Starting batch ({len(paths)} files)…")
+        self._run_btn.setEnabled(False)
+        self._worker = BatchWorker(fn, paths, make_kwargs)
+        self._worker.progress.connect(lambda pct: self._progress.setValue(int(pct)))
+        self._worker.item_progress.connect(lambda pct: self._progress_item.setValue(int(pct)))
+        self._worker.item_status.connect(self._status.setText)
+        self._worker.finished.connect(self._on_batch_finished)
+        self._worker.start()
+
+    def _on_batch_finished(self, errors):
+        n = len(self._worker._paths)
+        self._run_btn.setEnabled(True)
+        if errors:
+            self._progress.setValue(0)
+            self._progress_item.setValue(0)
+            self._status.setText(f"❌  {len(errors)} error(s) — {errors[0]}")
+        else:
+            self._progress.setValue(100)
+            self._progress_item.setValue(100)
+            self._status.setText(f"✅  Batch complete ({n} files)")
+
     # ── run section ───────────────────────────────────────────────────────
 
     def _build_run_section(self, layout):
         self._run_btn = QPushButton("▶  Run")
         self._run_btn.setFixedHeight(36)
         self._run_btn.clicked.connect(self._run)
+        layout.addWidget(self._run_btn)
+
+        if hasattr(self, "_inputs"):
+            self._progress_item = QProgressBar()
+            self._progress_item.setRange(0, 100)
+            self._progress_item.setValue(0)
+            self._progress_item.setFormat("Current: %p%")
+            layout.addWidget(self._progress_item)
+
         self._progress = QProgressBar()
         self._progress.setRange(0, 100)
         self._progress.setValue(0)
-        self._status = QLabel("")
-        layout.addWidget(self._run_btn)
+        if hasattr(self, "_inputs"):
+            self._progress.setFormat("Overall: %p%")
         layout.addWidget(self._progress)
+
+        self._status = QLabel("")
         layout.addWidget(self._status)
 
     def _on_finished(self, result):

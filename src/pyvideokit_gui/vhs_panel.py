@@ -8,13 +8,11 @@ from pyvideokit_libs import apply_vhs_effect
 
 class VhsPanel(BasePanel):
     def _build_ui(self, layout: QVBoxLayout):
-        self._input = self._input_row(layout, "Input file (must have audio)")
-        self._output = self._output_row(layout, "Output MKV (optional)")
+        self._inputs = self._batch_input_list(layout, "Input files (must have audio)")
 
     def _run(self):
-        path = self._input.text().strip()
-        if not path:
-            self._status.setText("❌  Select an input file.")
+        paths = [Path(self._inputs.item(i).text()) for i in range(self._inputs.count())]
+        if not paths:
+            self._status.setText("❌  Add at least one file.")
             return
-        output = self._output.text().strip() or None
-        self._start_worker(apply_vhs_effect, Path(path), output=output)
+        self._start_batch(apply_vhs_effect, paths, lambda p: {"output": None})
