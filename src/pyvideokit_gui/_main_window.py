@@ -13,7 +13,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("PyVideoKit")
-        self.setMinimumSize(660, 460)
+        self.setMinimumSize(670, 460)
 
         tabs = QTabWidget()
         tabs.addTab(ConvertPanel(), "🎞️  Convert to FFV1")
