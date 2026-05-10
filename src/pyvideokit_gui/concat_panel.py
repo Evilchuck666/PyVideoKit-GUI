@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from PySide6.QtWidgets import (
+    QAbstractItemView,
     QFileDialog,
     QHBoxLayout,
     QLabel,
@@ -17,6 +18,7 @@ class ConcatPanel(BasePanel):
         layout.addWidget(QLabel("Video files (add at least 2, drag to reorder)"))
 
         self._list = DropListWidget()
+        self._list.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self._list.setMinimumHeight(120)
         layout.addWidget(self._list)
 
