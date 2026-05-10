@@ -136,6 +136,23 @@ class BasePanel(QWidget):
         if path:
             le.setText(path)
 
+    def _output_dir_row(self, layout, label="Output directory (optional)") -> QLineEdit:
+        layout.addWidget(QLabel(label))
+        row = QHBoxLayout()
+        le = DropLineEdit()
+        le.setPlaceholderText("Leave empty to save next to each input file…")
+        btn = QPushButton("Browse…")
+        row.addWidget(le)
+        row.addWidget(btn)
+        layout.addLayout(row)
+        btn.clicked.connect(lambda: self._browse_dir(le))
+        return le
+
+    def _browse_dir(self, le: QLineEdit):
+        path = QFileDialog.getExistingDirectory(self, "Select output directory", "")
+        if path:
+            le.setText(path)
+
     # ── batch input list ──────────────────────────────────────────────────
 
     def _batch_input_list(self, layout, label="Input files") -> "DropListWidget":

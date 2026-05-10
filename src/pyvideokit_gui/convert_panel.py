@@ -22,10 +22,13 @@ class ConvertPanel(BasePanel):
         fps_row.addStretch()
         layout.addLayout(fps_row)
 
+        self._output_dir = self._output_dir_row(layout)
+
     def _run(self):
         paths = [Path(self._inputs.item(i).text()) for i in range(self._inputs.count())]
         if not paths:
             self._status.setText("❌  Add at least one file.")
             return
         fps = self._fps.value() if self._fps_override.isChecked() else None
-        self._start_batch(convert_to_ffv1, paths, lambda p: {"fps": fps, "output": None})
+        out_dir = self._output_dir.text().strip() or None
+        self._start_batch(convert_to_ffv1, paths, lambda p: {"fps": fps, "output": out_dir})
