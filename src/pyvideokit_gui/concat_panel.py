@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
 )
 
-from pyvideokit_gui._base_panel import BasePanel, DropListWidget
+from pyvideokit_gui._base_panel import BasePanel, DropListWidget, _VIDEO_EXTS
 from pyvideokit_libs import join_videos
 
 
@@ -43,6 +43,11 @@ class ConcatPanel(BasePanel):
     def _remove_selected(self):
         for item in self._list.selectedItems():
             self._list.takeItem(self._list.row(item))
+
+    def _on_panel_drop(self, paths: list):
+        for p in paths:
+            if Path(p).suffix.lower() in _VIDEO_EXTS:
+                self._list.addItem(p)
 
     def _run(self):
         paths = [Path(self._list.item(i).text()) for i in range(self._list.count())]

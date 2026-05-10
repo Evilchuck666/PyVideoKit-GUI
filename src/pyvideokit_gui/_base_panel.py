@@ -69,6 +69,7 @@ class BasePanel(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._worker = None
+        self.setAcceptDrops(True)
         root = QVBoxLayout(self)
         root.setAlignment(Qt.AlignTop)
         root.setSpacing(10)
@@ -76,6 +77,19 @@ class BasePanel(QWidget):
         self._build_ui(root)
         root.addStretch()
         self._build_run_section(root)
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.acceptProposedAction()
+
+    def dropEvent(self, event):
+        paths = [u.toLocalFile() for u in event.mimeData().urls()]
+        if paths:
+            self._on_panel_drop(paths)
+
+    def _on_panel_drop(self, paths: list):
+        if hasattr(self, "_input"):
+            self._input.setText(paths[0])
 
     def _build_ui(self, layout: QVBoxLayout):
         raise NotImplementedError
