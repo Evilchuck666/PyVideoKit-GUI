@@ -1,16 +1,14 @@
 from pathlib import Path
 
 from PySide6.QtWidgets import (
-    QAbstractItemView,
     QFileDialog,
     QHBoxLayout,
     QLabel,
-    QListWidget,
     QPushButton,
     QVBoxLayout,
 )
 
-from pyvideokit_gui._base_panel import BasePanel
+from pyvideokit_gui._base_panel import BasePanel, DropListWidget
 from pyvideokit_libs import join_videos
 
 
@@ -18,8 +16,7 @@ class ConcatPanel(BasePanel):
     def _build_ui(self, layout: QVBoxLayout):
         layout.addWidget(QLabel("Video files (add at least 2, drag to reorder)"))
 
-        self._list = QListWidget()
-        self._list.setDragDropMode(QAbstractItemView.InternalMove)
+        self._list = DropListWidget()
         self._list.setMinimumHeight(120)
         layout.addWidget(self._list)
 

@@ -2,10 +2,12 @@ from pathlib import Path
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
+    QAbstractItemView,
     QFileDialog,
     QHBoxLayout,
     QLabel,
     QLineEdit,
+    QListWidget,
     QProgressBar,
     QPushButton,
     QVBoxLayout,
@@ -15,6 +17,52 @@ from PySide6.QtWidgets import (
 from pyvideokit_gui._worker import Worker
 
 _VIDEO_FILTER = "Video files (*.mkv *.mp4 *.mov *.avi *.webm);;All files (*)"
+_VIDEO_EXTS = {".mkv", ".mp4", ".mov", ".avi", ".webm"}
+
+
+class DropLineEdit(QLineEdit):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setAcceptDrops(True)
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.acceptProposedAction()
+
+    def dropEvent(self, event):
+        urls = event.mimeData().urls()
+        if urls:
+            self.setText(urls[0].toLocalFile())
+
+
+class DropListWidget(QListWidget):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setAcceptDrops(True)
+        self.setDragDropMode(QAbstractItemView.DragDrop)
+        self.setDefaultDropAction(Qt.MoveAction)
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.acceptProposedAction()
+        else:
+            super().dragEnterEvent(event)
+
+    def dragMoveEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.acceptProposedAction()
+        else:
+            super().dragMoveEvent(event)
+
+    def dropEvent(self, event):
+        if event.mimeData().hasUrls():
+            for url in event.mimeData().urls():
+                path = url.toLocalFile()
+                if Path(path).suffix.lower() in _VIDEO_EXTS:
+                    self.addItem(path)
+            event.acceptProposedAction()
+        else:
+            super().dropEvent(event)
 
 
 class BasePanel(QWidget):
@@ -40,7 +88,7 @@ class BasePanel(QWidget):
     def _input_row(self, layout, label="Input file", filter=_VIDEO_FILTER) -> QLineEdit:
         layout.addWidget(QLabel(label))
         row = QHBoxLayout()
-        le = QLineEdit()
+        le = DropLineEdit()
         le.setPlaceholderText("Select a file…")
         btn = QPushButton("Browse…")
         row.addWidget(le)
@@ -52,7 +100,7 @@ class BasePanel(QWidget):
     def _output_row(self, layout, label="Output (optional)") -> QLineEdit:
         layout.addWidget(QLabel(label))
         row = QHBoxLayout()
-        le = QLineEdit()
+        le = DropLineEdit()
         le.setPlaceholderText("Leave empty for default…")
         btn = QPushButton("Browse…")
         row.addWidget(le)
