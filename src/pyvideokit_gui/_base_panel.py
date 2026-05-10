@@ -1,3 +1,5 @@
+import shutil
+import subprocess
 from pathlib import Path
 
 from PySide6.QtCore import Qt
@@ -18,6 +20,13 @@ from pyvideokit_gui._worker import BatchWorker, Worker
 
 _VIDEO_FILTER = "Video files (*.mkv *.mp4 *.mov *.avi *.webm);;All files (*)"
 _VIDEO_EXTS = {".mkv", ".mp4", ".mov", ".avi", ".webm"}
+
+_COMPLETE_SOUND = "/usr/share/sounds/freedesktop/stereo/complete.oga"
+_SOUND_CMD: list[str] | None = None
+for _cmd, _extra in [("paplay", []), ("pw-play", []), ("ffplay", ["-nodisp", "-autoexit", "-loglevel", "quiet"])]:
+    if shutil.which(_cmd):
+        _SOUND_CMD = [_cmd, *_extra, _COMPLETE_SOUND]
+        break
 
 
 class DropLineEdit(QLineEdit):
@@ -215,6 +224,7 @@ class BasePanel(QWidget):
             self._progress.setValue(100)
             self._progress_item.setValue(100)
             self._status.setText(f"✅  Batch complete ({n} files)")
+            self._play_complete_sound()
 
     # ── run section ───────────────────────────────────────────────────────
 
@@ -241,10 +251,15 @@ class BasePanel(QWidget):
         self._status = QLabel("")
         layout.addWidget(self._status)
 
+    def _play_complete_sound(self):
+        if _SOUND_CMD:
+            subprocess.Popen(_SOUND_CMD, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
     def _on_finished(self, result):
         self._progress.setValue(100)
         self._status.setText(f"✅  Done → {Path(str(result)).name}")
         self._run_btn.setEnabled(True)
+        self._play_complete_sound()
 
     def _on_error(self, msg):
         self._progress.setValue(0)
