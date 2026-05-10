@@ -3,19 +3,21 @@
 ![Python](https://img.shields.io/badge/python-%3E%3D3.10-blue)
 ![License](https://img.shields.io/badge/license-GPLv3-green)
 
-Graphical interface for PyVideoKit — FFmpeg-based video processing. Provides the same operations as [PyVideoKit-CLI](../PyVideoKit-CLI) through a PySide6 desktop application with real-time progress tracking.
+Graphical interface for PyVideoKit — FFmpeg-based video processing. Provides the same operations as [PyVideoKit-CLI](../PyVideoKit-CLI) through a PySide6 desktop application with real-time progress tracking, drag-and-drop input, and batch processing.
 
 ---
 
 ## ✨ Features
 
-- 📼 **VHS effect** — retro visual noise, color bleed, and audio degradation
+- 🎞️ **Convert to FFV1** — batch-convert multiple videos to lossless FFV1/MKV masters
 - ✂️ **Trim** — cut a segment by start/end time with stream copy (no re-encoding)
-- 🔗 **Concatenate** — join multiple videos with drag-and-drop reordering
+- 🔗 **Concatenate** — join multiple videos with drag-and-drop reordering and multi-selection
 - 🎬 **Fade** — fade-in and/or fade-out on an FFV1 master
-- 🔊 **Extract audio** — dump the audio track to uncompressed WAV (PCM 16-bit)
-- 🎞️ **Convert to FFV1** — create a lossless MKV master for editing
-- 📺 **Prepare for YouTube** — encode to ProRes 422 HQ MOV, upscaled to 4K
+- 📼 **VHS effect** — batch-apply retro visual noise, color bleed, and audio degradation
+- 🔊 **Extract audio** — batch-export audio tracks to uncompressed WAV (PCM 16-bit)
+- 📺 **Prepare for YouTube** — batch-encode to ProRes 422 HQ MOV, upscaled to 4K
+- 🖱️ **Drag & drop** — drop files anywhere on any panel; drop multiple files onto batch panels
+- 📁 **Output directory** — optionally redirect all batch output to a chosen folder
 
 ---
 
@@ -26,6 +28,7 @@ Graphical interface for PyVideoKit — FFmpeg-based video processing. Provides t
 - **FFmpeg** and **FFprobe** available in `PATH`
 - **SoX** available in `PATH` (required by VHS effect)
 - **PyVideoKit-Libs** — installed automatically as a dependency
+- **`paplay`**, **`pw-play`**, or **`ffplay`** in `PATH` *(optional — for completion sound)*
 
 ---
 
@@ -89,7 +92,7 @@ Keywords=video;ffmpeg;trim;fade;vhs;youtube;convert;
 EOF
 ```
 
-**3. Refresh the icon cache** *(may be required on some desktop environments)*:
+**3. Refresh the icon cache** *(maybe required in some desktop environments)*:
 
 ```bash
 gtk-update-icon-cache ~/.local/share/icons/hicolor/
@@ -107,17 +110,19 @@ pvk-gui
 
 The application opens a tabbed window. Each tab corresponds to one operation:
 
-| Tab | Operation |
-|---|---|
-| 🎞️ Convert to FFV1 | Convert any video to a lossless FFV1/MKV master |
-| ✂️ Trim | Cut a segment by start/end time (no re-encoding) |
-| 🔗 Concat | Join multiple videos (drag to reorder) |
-| 🎬 Fade | Add fade-in and/or fade-out |
-| 📼 VHS Effect | Apply retro VHS visual and audio effect |
-| 🔊 Extract Audio | Export audio track to WAV |
-| 📺 YouTube | Encode to ProRes 422 HQ MOV for upload |
+| Tab                 | Operation                                                      | Batch |
+|---------------------|----------------------------------------------------------------|:-----:|
+| 🎞️ Convert to FFV1 | Convert videos to lossless FFV1/MKV masters                    |   ✅   |
+| ✂️ Trim             | Cut a segment by start/end time (no re-encoding)               |   —   |
+| 🔗 Concat           | Join multiple videos (drag to reorder, multi-select to remove) |   —   |
+| 🎬 Fade             | Add fade-in and/or fade-out                                    |   —   |
+| 📼 VHS Effect       | Apply retro VHS visual and audio effect                        |   ✅   |
+| 🔊 Extract Audio    | Export audio tracks to WAV                                     |   ✅   |
+| 📺 YouTube          | Encode to ProRes 422 HQ MOV for upload                         |   ✅   |
 
-All operations run in a background thread and display a real-time progress bar.
+Batch panels accept multiple input files via drag & drop or the "Add files…" button, and optionally redirect output to a chosen directory. They show two progress bars: one for the current file and one for the overall batch.
+
+All operations run in a background thread. A system sound plays on completion.
 
 ---
 
