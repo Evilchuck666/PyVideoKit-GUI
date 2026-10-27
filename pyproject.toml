@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "PyVideoKit-GUI"
 version = "0.4.2"
-description = "PySide6 desktop app for PyVideoKit: batch trim, concatenate, fade, VHS effect, WAV extraction, lossless FFV1 masters and 4K ProRes exports for YouTube"
+description = "PySide6 desktop app for PyVideoKit: trim, concatenate, fade, VHS effect, WAV extraction, lossless FFV1 masters and 4K ProRes exports for YouTube, with batch processing"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {file = "LICENSE"}
@@ -16,7 +16,11 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "PySide6>=6.0",
+    # PySide6 6.12.0 drops a reference to True on every Signal.emit(), which
+    # crashes Python 3.10/3.11 after enough progress updates. True is immortal
+    # from Python 3.12 on, so only older interpreters skip that release.
+    "PySide6>=6.0,!=6.12.0; python_version < '3.12'",
+    "PySide6>=6.0; python_version >= '3.12'",
     "PyVideoKit-Libs>=0.4.2",
 ]
 keywords = ["ffmpeg", "video", "gui", "pyside6", "qt6", "video-processing", "ffv1", "prores", "vhs", "youtube"]
