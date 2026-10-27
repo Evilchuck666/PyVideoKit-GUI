@@ -1,7 +1,12 @@
 # 🎬 PyVideoKit-GUI
 
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20GNU%2FLinux%20%7C%20macOS-blue)
 ![Python](https://img.shields.io/badge/python-%3E%3D3.10-blue)
-![License](https://img.shields.io/badge/license-GPLv3-green)
+![PySide6](https://img.shields.io/badge/PySide6-%3E%3D6.0-blue)
+![Requires](https://img.shields.io/badge/requires-FFmpeg%2C%20SoX-blue)
+[![License](https://img.shields.io/badge/license-GPLv3-green)](LICENSE)
+[![Latest release](https://img.shields.io/github/v/release/Evilchuck666/PyVideoKit-GUI?label=download&sort=semver)](https://github.com/Evilchuck666/PyVideoKit-GUI/releases/latest)
+[![Build and tests](https://github.com/Evilchuck666/PyVideoKit-GUI/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/Evilchuck666/PyVideoKit-GUI/actions/workflows/release.yml)
 
 Graphical interface for PyVideoKit — FFmpeg-based video processing. Provides the same operations as [PyVideoKit-CLI](../PyVideoKit-CLI) through a PySide6 desktop application with real-time progress tracking, drag-and-drop input, and batch processing.
 
