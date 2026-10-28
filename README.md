@@ -2,7 +2,7 @@
 
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20GNU%2FLinux%20%7C%20macOS-blue)
 ![Python](https://img.shields.io/badge/python-%3E%3D3.10-blue)
-![PySide6](https://img.shields.io/badge/PySide6-%3E%3D6.0-blue)
+![PySide6](https://img.shields.io/badge/PySide6-%3E%3D6.2-blue)
 ![Requires](https://img.shields.io/badge/requires-FFmpeg%2C%20SoX-blue)
 [![License](https://img.shields.io/badge/license-GPLv3-green)](LICENSE)
 [![Latest release](https://img.shields.io/github/v/release/Evilchuck666/PyVideoKit-GUI?label=download&sort=semver)](https://github.com/Evilchuck666/PyVideoKit-GUI/releases/latest)
@@ -29,7 +29,7 @@ Graphical interface for PyVideoKit — FFmpeg-based video processing. Provides t
 ## 📦 Requirements
 
 - **Python** ≥ 3.10
-- **PySide6** ≥ 6.0
+- **PySide6** ≥ 6.2
 - **FFmpeg** and **FFprobe** available in `PATH`
 - **SoX** available in `PATH` (required by VHS effect)
 - **PyVideoKit-Libs** — installed automatically as a dependency
